@@ -1,14 +1,14 @@
 import express from 'express';
-import auth from './auth/auth.routes';
+import api from './api';
 
 const router = express.Router();
 
 router.get('/', (req, res) => {
   res.json({
-    message: 'Hello from the API endpoint',
+    message: 'Howdy! The API is up and running!',
   });
 });
 
-router.use('/auth', auth);
+router.use('/api/v1', api);
 
 export default router;

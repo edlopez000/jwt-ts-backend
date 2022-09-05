@@ -1,5 +1,5 @@
-import { User } from './../../prisma/generated/models/User.model';
 import jwt from 'jsonwebtoken';
+import { User } from '../../prisma/generated/interfaces/index';
 
 export const generateAccessToken = (user: User) => {
   return jwt.sign({ userId: user.id }, `${process.env.JWT_ACCESS_SECRET}`, {
@@ -7,7 +7,7 @@ export const generateAccessToken = (user: User) => {
   });
 };
 
-export const generateRefreshToken = (user: User, jti) => {
+export const generateRefreshToken = (user: User, jti: string) => {
   return jwt.sign(
     {
       userId: user.id,
@@ -20,7 +20,7 @@ export const generateRefreshToken = (user: User, jti) => {
   );
 };
 
-export const generateTokens = (user: User, jti) => {
+export const generateTokens = (user: User, jti: string) => {
   const accessToken = generateAccessToken(user);
   const refreshToken = generateRefreshToken(user, jti);
 
