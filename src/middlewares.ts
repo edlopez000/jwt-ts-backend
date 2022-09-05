@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-
 import ErrorResponse from './interfaces/ErrorResponse';
+import jwt from 'jsonwebtoken';
 
 export function notFound(req: Request, res: Response, next: NextFunction) {
   res.status(404);
@@ -21,3 +21,34 @@ export function errorHandler(
     stack: process.env.NODE_ENV === 'production' ? '🥞' : err.stack,
   });
 }
+
+export const isAuthenticated = (
+  // TEMP - set req to any to test if the payload can be passed in the body
+  // prefer to set type to Request from 'express'
+  req: any,
+  res: Response,
+  next: NextFunction
+) => {
+  const { authorization } = req.headers;
+
+  if (!authorization) {
+    res.status(401);
+    throw new Error('Un-authorized');
+  }
+
+  try {
+    const token = authorization.split('')[1];
+    const payload = jwt.verify(token, `${process.env.JWT_ACCESS_SECRET}`);
+    // considering using req.body.payload since the req.body typing is set to any
+    req.payload = payload;
+  } catch (err) {
+    res.status(401);
+    if (err instanceof Error) {
+      if (err.name === 'TokenExpiredError') {
+        throw new Error('err.name');
+      }
+      throw new Error('Un-authorized');
+    }
+  }
+  return next();
+};
