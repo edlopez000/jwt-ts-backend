@@ -4,7 +4,7 @@ import {
   findUserById,
 } from './../users/users.services';
 import express from 'express';
-import { uuid } from 'uuidv4';
+import { v4 as uuid } from 'uuid';
 import { generateTokens } from '../../utils/jwt';
 import {
   addRefreshTokenToWhitelist,
