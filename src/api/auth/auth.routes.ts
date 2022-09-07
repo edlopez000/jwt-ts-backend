@@ -90,9 +90,6 @@ router.post('/refreshToken', async (req, res, next) => {
       `${process.env.JWT_REFRESH_SECRET}`
     );
 
-    // TEMP
-    console.log(payload);
-
     const savedRefreshToken = await findRefreshTokenById(payload.jti);
 
     if (!savedRefreshToken || savedRefreshToken.revoked === true) {
@@ -107,6 +104,7 @@ router.post('/refreshToken', async (req, res, next) => {
     }
 
     const user = await findUserById(payload.id);
+
     if (!user) {
       res.status(401);
       throw new Error('Unauthorized');

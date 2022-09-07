@@ -24,7 +24,7 @@ export function errorHandler(
 
 export const isAuthenticated = (
   // TEMP - set req to any to test if the payload can be passed in the body
-  // prefer to set type to Request from 'express'
+  // prefer to set type to Request from 'express' but encountering errors
   req: any,
   res: Response,
   next: NextFunction
@@ -37,17 +37,17 @@ export const isAuthenticated = (
   }
 
   try {
-    const token = authorization.split('')[1];
+    const token = authorization.split(' ')[1];
     const payload = jwt.verify(token, `${process.env.JWT_ACCESS_SECRET}`);
-    // considering using req.body.payload since the req.body typing is set to any
+    // considering using req.body.payload since the req.body typing is set to any as a temporary measure
     req.payload = payload;
   } catch (err) {
     res.status(401);
     if (err instanceof Error) {
       if (err.name === 'TokenExpiredError') {
-        throw new Error('err.name');
+        throw new Error(err.name);
       }
-      throw new Error('Un-authorized');
+      throw new Error(`Un-authorized: ${err.name}`);
     }
   }
   return next();

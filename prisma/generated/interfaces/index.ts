@@ -1,6 +1,7 @@
 // AUTO GENERATED FILE BY @kalissaac/prisma-typegen
 // DO NOT EDIT
 // Ignored the warning above and modified as needed
+// Next time I run the generator, I'll need to look at the diff of the files
 
 export interface User {
   id?: string;
