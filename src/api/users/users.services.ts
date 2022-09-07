@@ -16,5 +16,7 @@ export const createUserByEmailAndPassword = (user: User) => {
 };
 
 export const findUserById = (id: string) => {
-  return db.user.findUnique({ where: { id } });
+  return db.user.findFirst({
+    where: { id },
+  });
 };
