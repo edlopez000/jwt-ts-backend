@@ -34,7 +34,7 @@ router.post('/register', async (req, res, next) => {
     const user = await createUserByEmailAndPassword({ email, password });
     const jti = uuid();
     const { accessToken, refreshToken } = generateTokens(user, jti);
-    await addRefreshTokenToWhitelist(jti, refreshToken, user.id);
+    await addRefreshTokenToWhitelist({ jti, refreshToken, userId: user.id });
 
     res.json({
       accessToken,
@@ -68,7 +68,11 @@ router.post('/login', async (req, res, next) => {
 
     const jti = uuid();
     const { accessToken, refreshToken } = generateTokens(existingUser, jti);
-    await addRefreshTokenToWhitelist(jti, refreshToken, existingUser.id);
+    await addRefreshTokenToWhitelist({
+      jti,
+      refreshToken,
+      userId: existingUser.id,
+    });
 
     res.json({ accessToken, refreshToken });
   } catch (err) {
@@ -90,6 +94,9 @@ router.post('/refreshToken', async (req, res, next) => {
       `${process.env.JWT_REFRESH_SECRET}`
     );
 
+    //Issue happens after this point because the console log, shows the correct payload
+    console.log(payload);
+
     const savedRefreshToken = await findRefreshTokenById(payload.jti);
 
     if (!savedRefreshToken || savedRefreshToken.revoked === true) {
@@ -103,7 +110,10 @@ router.post('/refreshToken', async (req, res, next) => {
       throw new Error('Unauthorized');
     }
 
-    const user = await findUserById(payload.id);
+    const user = await findUserById(payload.userId);
+
+    // Testing to see if correct user is provided
+    console.log(user);
 
     if (!user) {
       res.status(401);
@@ -116,7 +126,11 @@ router.post('/refreshToken', async (req, res, next) => {
       user,
       jti
     );
-    await addRefreshTokenToWhitelist(jti, newRefreshToken, user.id);
+    await addRefreshTokenToWhitelist({
+      jti,
+      refreshToken: newRefreshToken,
+      userId: user.id,
+    });
 
     res.json({ accessToken, refreshToken: newRefreshToken });
   } catch (err) {

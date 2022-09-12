@@ -1,11 +1,15 @@
 import { db } from '../../utils/db';
 import hashToken from '../../utils/hashToken';
 
-export const addRefreshTokenToWhitelist = (
-  jti: string,
-  refreshToken: string,
-  userId: string
-) => {
+export const addRefreshTokenToWhitelist = ({
+  jti,
+  refreshToken,
+  userId,
+}: {
+  jti: string;
+  refreshToken: string;
+  userId: string;
+}) => {
   return db.refreshToken.create({
     data: {
       id: jti,
