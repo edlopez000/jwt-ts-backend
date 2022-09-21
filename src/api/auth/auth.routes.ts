@@ -21,13 +21,15 @@ router.post('/register', async (req, res, next) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
-      res.status(400);
+      res
+        .status(400)
+        .send({ message: 'You must provide an email and password' });
       throw new Error('You must provide an email and password.');
     }
     const existingUser = await findUserByEmail(email);
 
     if (existingUser) {
-      res.status(400);
+      res.status(400).send({ message: 'Email Already in use' });
       throw new Error('Email already in use.');
     }
 
@@ -49,20 +51,22 @@ router.post('/login', async (req, res, next) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
-      res.status(400);
+      res
+        .status(400)
+        .send({ message: 'You must provide an email and password' });
       throw new Error('You must provide an email and password');
     }
 
     const existingUser = await findUserByEmail(email);
 
     if (!existingUser) {
-      res.status(403);
+      res.status(403).send({ message: 'Invalid login credentials' });
       throw new Error('Invalid login credentials');
     }
 
     const validPassword = await bcrypt.compare(password, existingUser.password);
     if (!validPassword) {
-      res.status(403);
+      res.status(403).send({ message: 'Invalid login credentials.' });
       throw new Error('Invalid login credentials.');
     }
 
@@ -84,7 +88,7 @@ router.post('/refreshToken', async (req, res, next) => {
   try {
     const { refreshToken } = req.body;
     if (!refreshToken) {
-      res.status(400);
+      res.status(400).send({ message: 'Missing refresh token.' });
       throw new Error('Missing refresh token.');
     }
 
@@ -94,19 +98,16 @@ router.post('/refreshToken', async (req, res, next) => {
       `${process.env.JWT_REFRESH_SECRET}`
     );
 
-    //Issue happens after this point because the console log, shows the correct payload
-    console.log(payload);
-
     const savedRefreshToken = await findRefreshTokenById(payload.jti);
 
     if (!savedRefreshToken || savedRefreshToken.revoked === true) {
-      res.status(400);
+      res.status(400).send({ message: 'Unauthorized' });
       throw new Error('Unauthorized');
     }
 
     const hashedToken = hashToken(refreshToken);
     if (hashedToken !== savedRefreshToken.hashedToken) {
-      res.status(401);
+      res.status(401).send({ message: 'Unauthorized' });
       throw new Error('Unauthorized');
     }
 
@@ -116,7 +117,7 @@ router.post('/refreshToken', async (req, res, next) => {
     console.log(user);
 
     if (!user) {
-      res.status(401);
+      res.status(401).send('Unauthorized');
       throw new Error('Unauthorized');
     }
 

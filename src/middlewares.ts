@@ -32,7 +32,7 @@ export const isAuthenticated = (
   const { authorization } = req.headers;
 
   if (!authorization) {
-    res.status(401);
+    res.status(401).send({ message: 'Un-authorized' });
     throw new Error('Un-authorized');
   }
 
