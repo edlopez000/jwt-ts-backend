@@ -113,9 +113,6 @@ router.post('/refreshToken', async (req, res, next) => {
 
     const user = await findUserById(payload.userId);
 
-    // Testing to see if correct user is provided
-    console.log(user);
-
     if (!user) {
       res.status(401).send('Unauthorized');
       throw new Error('Unauthorized');
