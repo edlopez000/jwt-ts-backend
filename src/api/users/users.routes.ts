@@ -1,6 +1,7 @@
 import express from 'express';
 import { isAuthenticated } from '../../middlewares';
-import { findUserById } from './users.services';
+import { findUserById, changePasswordByUserId } from './users.services';
+import bcrypt from 'bcrypt';
 
 const router = express.Router();
 
@@ -15,6 +16,33 @@ router.get('/profile', isAuthenticated, async (req: any, res, next) => {
     const user: any = await findUserById(userId);
     delete user?.password;
     res.json(user);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post('/forgotpassword', isAuthenticated, async (req: any, res, next) => {
+  try {
+    const { userId } = req.payload;
+    const { password, newPassword } = req.body;
+    const existingUser = await findUserById(userId);
+
+    if (!existingUser) {
+      res.status(404).send({ message: 'User does not exist.' });
+      throw new Error('User does not exist.');
+    }
+
+    const validPassword = await bcrypt.compare(password, existingUser.password);
+
+    if (!validPassword) {
+      res.status(403).send({ message: 'Invalid credentials.' });
+      throw new Error('Invalid credentials.');
+    }
+
+    await changePasswordByUserId(existingUser, newPassword);
+
+    // TODO: Need to revoke refreshToken after password change
+    res.status(200).json({ message: 'Password reset success!' });
   } catch (err) {
     next(err);
   }

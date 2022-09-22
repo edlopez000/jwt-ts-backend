@@ -20,3 +20,11 @@ export const findUserById = (id: string) => {
     where: { id },
   });
 };
+
+export const changePasswordByUserId = (user: User, newPassword: string) => {
+  newPassword = bcrypt.hashSync(newPassword, 12);
+  return db.user.update({
+    where: { id: user.id },
+    data: { password: newPassword },
+  });
+};
