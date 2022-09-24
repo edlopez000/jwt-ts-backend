@@ -1,7 +1,7 @@
+import bcrypt from 'bcrypt';
 import express from 'express';
 import { isAuthenticated } from '../../middlewares';
-import { findUserById, changePasswordByUserId } from './users.services';
-import bcrypt from 'bcrypt';
+import { changePasswordByUserId, findUserById } from './users.services';
 
 const router = express.Router();
 
@@ -21,7 +21,7 @@ router.get('/profile', isAuthenticated, async (req: any, res, next) => {
   }
 });
 
-router.post('/forgotpassword', isAuthenticated, async (req: any, res, next) => {
+router.post('/changepassword', isAuthenticated, async (req: any, res, next) => {
   try {
     const { userId } = req.payload;
     const { password, newPassword } = req.body;
