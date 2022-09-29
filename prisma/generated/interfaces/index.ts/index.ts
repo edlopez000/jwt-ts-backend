@@ -21,3 +21,13 @@ export interface RefreshToken {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface Post {
+  id: number;
+  createdAt: Date;
+  updatedAt: Date;
+  published: boolean;
+  title: string;
+  author?: User;
+  authorId?: string;
+}
