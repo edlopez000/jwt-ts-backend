@@ -28,3 +28,59 @@ export const getPostByUserId = ({ userId }: { userId: string }) => {
     },
   });
 };
+
+export const getPostByPostId = ({
+  userId,
+  postId,
+}: {
+  userId: string;
+  postId: number;
+}) => {
+  return db.post.findMany({
+    where: {
+      id: postId,
+      authorId: userId,
+    },
+  });
+};
+
+export const deletePostByPostId = ({
+  userId,
+  postId,
+}: {
+  userId: string;
+  postId: number;
+}) => {
+  return db.post.deleteMany({
+    where: {
+      id: Number(postId),
+      authorId: userId,
+    },
+  });
+};
+
+export const updatePostByPostId = ({
+  userId,
+  postId,
+  title,
+  content,
+  published,
+}: {
+  userId: string;
+  postId: number;
+  title?: string;
+  content?: string;
+  published?: boolean;
+}) => {
+  return db.post.updateMany({
+    where: {
+      id: Number(postId),
+      authorId: userId,
+    },
+    data: {
+      title: title,
+      content: content,
+      published: published,
+    },
+  });
+};
