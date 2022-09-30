@@ -23,11 +23,12 @@ export interface RefreshToken {
 }
 
 export interface Post {
-  id: number;
-  createdAt: Date;
-  updatedAt: Date;
-  published: boolean;
+  id?: number;
+  createdAt?: Date;
+  updatedAt?: Date;
+  published?: boolean;
   title: string;
   author?: User;
   authorId?: string;
+  content: string;
 }
